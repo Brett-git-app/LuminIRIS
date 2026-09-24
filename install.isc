@@ -1,0 +1,20 @@
+; =====================================================================
+; LuminIRIS - minimal bootstrap (only if IPM unavailable)
+; Usage:
+;   iris session IRIS -U USER < install.isc
+; Only ONE edit required: set root to the absolute path of this folder.
+; =====================================================================
+zn "USER"
+
+set root = "C:/IRIS"
+
+write !, "=== Loading Luminiris.Installer ===", !
+set sc = $system.OBJ.Load(root _ "/src/install/Luminiris.Installer.cls", "ck")
+do $system.Status.DisplayError(sc)
+if ($$$ISERR(sc)) halt
+
+write !, "=== Installing LuminIRIS ===", !
+set sc = ##class(Luminiris.Installer).Install(root _ "/src/csp")
+do $system.Status.DisplayError(sc)
+
+halt

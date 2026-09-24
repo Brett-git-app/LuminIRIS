@@ -1,0 +1,16 @@
+{
+  "name": "luminiris",
+  "version": "2.1.0",
+  "description": "LuminIRIS - Modern glassmorphism management console for InterSystems IRIS 2026.2+ - official SysAdmin REST API (/api/admin) plus an Embedded Python console",
+  "author": "Contest Developer",
+  "license": "MIT",
+  "keywords": ["LuminIRIS", "InterSystems", "IRIS", "Management Portal", "SysAdmin API", "IPM", "Docker", "Contest"],
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "intersystems": {
+    "product": "InterSystems IRIS",
+    "version": "2026.2+"
+  }
+}

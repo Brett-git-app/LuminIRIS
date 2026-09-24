@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module name="luminiris" version="2.1.0">
+  <Description><![CDATA[
+    LuminIRIS - A modern glassmorphism-style management console for InterSystems IRIS 2026.2+.
+    The front-end (HTML/CSS/JS) talks directly to the official SysAdmin REST API
+    (/api/admin, mainspec_v2 OpenAPI specification).
+
+    It additionally ships one small ObjectScript class, Luminiris.PythonApi
+    (extends %CSP.REST), which exposes the built-in Embedded Python engine at
+    /luminiris/api/python so the portal can run Python inside the IRIS process.
+
+    After installation in the USER namespace the portal is served at:
+      http://<host>:52773/csp/user/luminiris/index.html
+  ]]></Description>
+  <Packaging>
+    <Type>application</Type>
+  </Packaging>
+  <Resources>
+    <!-- ObjectScript classes (compiled into the target namespace) -->
+    <ClassRoot>src/cls</ClassRoot>
+    <!-- Static front-end deployed to <install-dir>/csp/user/luminiris/ -->
+    <CSP name="luminiris">src/csp</CSP>
+  </Resources>
+</Module>

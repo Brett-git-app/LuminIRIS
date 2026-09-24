@@ -1,0 +1,50 @@
+; =====================================================================
+; LuminIRIS - container build-time setup script
+; Invoked by the Dockerfile via:
+;   iris session IRIS -U USER < /irisdev/app/setup.script
+; =====================================================================
+
+; 1) Install the module via IPM.
+;    - ClassRoot src/cls  -> compiles Luminiris.PythonApi
+;    - CSP src/csp        -> static files to <install-dir>/csp/user/luminiris/
+zpm "install /irisdev/app"
+
+; 2) Configure /csp/user for anonymous static access.
+;    AutheEnabled: 65 = Password(1) + Unauthenticated(64)
+;    LockCSPName=0 serves the copied static files without manual CSP
+;    registration. No data is exposed anonymously: data calls go to
+;    /api/admin and are protected by the portal JWT login.
+zn "%SYS"
+kill p
+set p("AutheEnabled")=65
+set p("LockCSPName")=0
+set sc=##class(Security.Applications).Modify("/csp/user",.p)
+write !,"[luminiris] /csp/user: ",$system.Status.GetErrorText(sc),!
+
+; 3) Compile the Embedded Python REST dispatcher in %SYS.
+;    CRITICAL: the REST application dispatches in %SYS, so the class must
+;    be compiled there (same pattern as the built-in /api/admin API).
+set sc=$system.OBJ.Load("/irisdev/app/src/cls/Luminiris/PythonApi.cls","ck")
+write "[luminiris] PythonApi compiled in %SYS: ",$system.Status.GetErrorText(sc),!
+
+; 4) Create the /luminiris/api REST application (idempotent).
+;    Namespace=%SYS + Type=2 (REST) are mandatory; AutheEnabled=32 with
+;    JWTAuthEnabled=1 secures it with the same JWT issued by /api/admin,
+;    so the portal calls it same-origin with its Bearer token.
+kill r
+set r("Namespace")="%SYS"
+set r("Type")=2
+set r("Enabled")=1
+set r("DispatchClass")="Luminiris.PythonApi"
+set r("AutheEnabled")=32
+set r("JWTAuthEnabled")=1
+set tmp=##class(Security.Applications).Get("/luminiris/api",.old)
+if $$$ISERR(tmp) {
+    set sc2=##class(Security.Applications).Create("/luminiris/api",.r)
+    write "[luminiris] REST app created: ",$system.Status.GetErrorText(sc2),!
+} else {
+    set sc2=##class(Security.Applications).Modify("/luminiris/api",.r)
+    write "[luminiris] REST app updated: ",$system.Status.GetErrorText(sc2),!
+}
+
+halt

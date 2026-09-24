@@ -1,0 +1,69 @@
+; =====================================================================
+; Embedded Python BUG REPRODUCTION SCRIPT
+; Environment : IRIS for Windows (x86-64) 2026.2 (Build 221U) EDT
+;               Python 3.11.9 (Embedded Python), Windows 10 x64
+; Run (PowerShell, from the folder containing this file):
+;   Get-Content ep_bug_repro.isc | iris session IRIS -U USER
+; =====================================================================
+
+write !,"=============================================",!
+write "Embedded Python bug reproduction",!
+write "=============================================",!
+
+; -----------------------------------------------------------------
+; TEST 1: Run() executes a trivial, fully successful Python script.
+; Expected API behavior: success %Status (IsError=0).
+; Bug hypothesis       : error %Status (#00, no text) even on success.
+; -----------------------------------------------------------------
+write !,"--- TEST 1: Run(""x=1"") ---",!
+set sc=##class(%SYS.Python).Run("x=1")
+write "IsError = ",$system.Status.IsError(sc),!
+write "Status text: "
+do $system.Status.DisplayError(sc)
+
+; -----------------------------------------------------------------
+; TEST 2: Run() executes a script that prints to stdout (success).
+; -----------------------------------------------------------------
+write !,"--- TEST 2: Run(print to stdout) ---",!
+set sc=##class(%SYS.Python).Run("print('hi-from-python')")
+write "IsError = ",$system.Status.IsError(sc),!
+write "Status text: "
+do $system.Status.DisplayError(sc)
+
+; -----------------------------------------------------------------
+; TEST 3: Run() executes a script that RAISES a Python exception.
+; Marker string 'boom-marker-123' must be visible somewhere in the
+; returned error so ObjectScript callers can diagnose it.
+; Bug hypothesis: %Status loses the Python message/traceback.
+; -----------------------------------------------------------------
+write !,"--- TEST 3: Run(raise Exception) ---",!
+set sc=##class(%SYS.Python).Run("raise Exception('boom-marker-123')")
+write "IsError = ",$system.Status.IsError(sc),!
+write "Status text: "
+do $system.Status.DisplayError(sc)
+
+; -----------------------------------------------------------------
+; TEST 4: stdout is temporarily redirected (same pattern our REST
+; endpoint uses to capture output), then restored. Script succeeds.
+; Bug hypothesis: error %Status despite successful execution.
+; -----------------------------------------------------------------
+write !,"--- TEST 4: Run() with stdout redirect (success) ---",!
+set code="import sys,io"_$c(10)_"b=io.StringIO()"_$c(10)_"s=sys.stdout"_$c(10)_"sys.stdout=b"_$c(10)_"print(987)"_$c(10)_"sys.stdout=s"
+set sc=##class(%SYS.Python).Run(code)
+write "IsError = ",$system.Status.IsError(sc),!
+write "Status text: "
+do $system.Status.DisplayError(sc)
+
+; -----------------------------------------------------------------
+; TEST 5: iris.globals is an empty wrapper; iris.gref is the API.
+; -----------------------------------------------------------------
+write !,"--- TEST 5: iris.globals wrapper ---",!
+set sc=##class(%SYS.Python).Run("import iris;print('has globals:',hasattr(iris,'globals'));print('dir:',dir(iris.globals))")
+write "IsError = ",$system.Status.IsError(sc),!
+do $system.Status.DisplayError(sc)
+
+write !,"=============================================",!
+write "Done. Please screenshot/copy ALL output above.",!
+write "=============================================",!
+
+halt

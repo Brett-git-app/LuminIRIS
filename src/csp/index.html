@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuminIRIS</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background decorations -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Login overlay -->
+    <div class="login-overlay" id="login-overlay">
+        <div class="login-card">
+            <div class="login-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                    <path d="M2 17l10 5 10-5"/>
+                    <path d="M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            <h2>LuminIRIS</h2>
+            <p>Sign in to Management Console</p>
+            <div class="login-field">
+                <input type="text" id="login-user" placeholder="Username" autocomplete="username">
+            </div>
+            <div class="login-field">
+                <input type="password" id="login-pass" placeholder="Password" autocomplete="current-password">
+            </div>
+            <button class="login-btn" id="login-btn">Sign In</button>
+            <div class="login-msg" id="login-msg"></div>
+            <div class="login-foot">Official SysAdmin API &middot; JWT Auth</div>
+        </div>
+    </div>
+
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h2>LuminIRIS</h2>
+                    <span>Management Console</span>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <button class="nav-item active" data-tab="overview">
+                    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+                    <span class="nav-label">Overview</span>
+                </button>
+                <button class="nav-item" data-tab="webapp">
+                    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+                    <span class="nav-label">Web & API</span>
+                </button>
+                <button class="nav-item" data-tab="permission">
+                    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+                    <span class="nav-label">Permissions</span>
+                </button>
+                <button class="nav-item" data-tab="task">
+                    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+                    <span class="nav-label">Tasks</span>
+                </button>
+                <button class="nav-item" data-tab="log">
+                    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></span>
+                    <span class="nav-label">Audit Logs</span>
+                </button>
+                <button class="nav-item" data-tab="python">
+                    <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c-3 0-4 1-4 3v1h8V5c0-2-1-3-4-3z"/><path d="M8 6v3a2 2 0 0 0 2 2h4a2 2 0 0 1 2 2v3"/><path d="M12 22c3 0 4-1 4-3v-1H8v1c0 2 1 3 4 3z"/><circle cx="9" cy="6" r="1" fill="currentColor"/><circle cx="15" cy="18" r="1" fill="currentColor"/></svg></span>
+                    <span class="nav-label">Python</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="status-dot"></div>
+                <span>JWT Active</span>
+                <button class="logout-btn" id="logout-btn" title="Logout">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main content area -->
+        <main class="main">
+            <header class="topbar">
+                <div class="page-title">
+                    <h1 id="page-title">System Overview</h1>
+                    <p id="page-subtitle">Real-time monitoring via official /api/admin</p>
+                </div>
+                <div class="topbar-actions">
+                    <div class="instance-badge">
+                        <span class="badge-dot"></span>
+                        <span id="instance-name">IRIS</span>
+                    </div>
+                    <button class="refresh-btn" onclick="loadAll()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12a9 9 0 1 1-3-6.7L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Overview -->
+            <section class="tab-content active" id="overview">
+                <div class="stats-grid">
+                    <div class="stat-card stat-cache">
+                        <div class="stat-header">
+                            <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 14l4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg></span>
+                            <span class="stat-title">Cache Efficiency</span>
+                        </div>
+                        <div class="stat-value"><span id="m-cache">--</span><small>%</small></div>
+                        <div class="stat-bar"><div class="stat-bar-fill" id="m-cache-bar"></div></div>
+                        <div class="stat-label">Global Buffer Hit Ratio</div>
+                    </div>
+                    <div class="stat-card stat-mem">
+                        <div class="stat-header">
+                            <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+                            <span class="stat-title">Global Refs/sec</span>
+                        </div>
+                        <div class="stat-value"><span id="m-globals">--</span></div>
+                        <div class="stat-label">Global References Per Second</div>
+                    </div>
+                    <div class="stat-card stat-disk">
+                        <div class="stat-header">
+                            <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></span>
+                            <span class="stat-title">Set+Kill</span>
+                        </div>
+                        <div class="stat-value"><span id="m-sets">--</span></div>
+                        <div class="stat-label">Global Set+Kill Operations</div>
+                    </div>
+                    <div class="stat-card stat-io">
+                        <div class="stat-header">
+                            <span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="12" x2="2" y2="12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/><line x1="6" y1="16" x2="6.01" y2="16"/><line x1="10" y1="16" x2="10.01" y2="16"/></svg></span>
+                            <span class="stat-title">Disk I/O</span>
+                        </div>
+                        <div class="stat-io-grid">
+                            <div class="io-item"><b id="m-diskread">--</b><span>Reads</span></div>
+                            <div class="io-item"><b id="m-diskwrite">--</b><span>Writes</span></div>
+                        </div>
+                        <div class="stat-label">Physical Disk Access</div>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>Instance Info</h3>
+                        <div class="info-row"><span>Version</span><b id="info-version">--</b></div>
+                        <div class="info-row"><span>Namespaces</span><b id="info-namespace">--</b></div>
+                        <div class="info-row"><span>Current User</span><b id="info-user">--</b></div>
+                    </div>
+                    <div class="info-card">
+                        <h3>System Resources (Seizes)</h3>
+                        <div id="resource-bars" class="res-list">
+                            <div class="loading" style="text-align:center;padding:20px;color:var(--text-2)">Loading...</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Web & API -->
+            <section class="tab-content" id="webapp">
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Web Applications</h2>
+                        <span class="panel-count" id="webapp-count">0</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>App Name</th><th>Namespace</th><th>Type</th><th>Auth Methods</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="webapp-body">
+                                <tr><td colspan="5" class="loading">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Permissions -->
+            <section class="tab-content" id="permission">
+                <div class="panel" style="margin-bottom:20px">
+                    <div class="panel-header">
+                        <h2>Users</h2>
+                        <span class="panel-count" id="perm-count">0</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Username</th><th>Full Name</th><th>Type</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="perm-body">
+                                <tr><td colspan="4" class="loading">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Roles</h2>
+                        <span class="panel-count" id="role-count">0</span>
+                    </div>
+                    <div class="role-tags" id="role-tags">Loading...</div>
+                </div>
+            </section>
+
+            <!-- Tasks -->
+            <section class="tab-content" id="task">
+                <div class="panel" style="margin-bottom:20px">
+                    <div class="panel-header">
+                        <h2>Scheduled Tasks</h2>
+                        <span class="panel-count" id="task-count">0</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>Task Name</th><th>Type</th><th>Namespace</th><th>Next Scheduled</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="task-body">
+                                <tr><td colspan="5" class="loading">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2>Running Processes</h2>
+                        <span class="panel-count" id="proc-count">0</span>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr><th>PID</th><th>Namespace</th><th>Routine</th><th>State</th></tr>
+                            </thead>
+                            <tbody id="proc-body">
+                                <tr><td colspan="4" class="loading">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logs -->
+            <section class="tab-content" id="log">
+                <div class="panel log-panel">
+                    <div class="panel-header">
+                        <h2>Security Audit Records</h2>
+                        <div class="log-controls">
+                            <span class="panel-count" id="log-count">0</span>
+                        </div>
+                    </div>
+                    <div class="log-header-bar">
+                        <div class="log-dots"><span></span><span></span><span></span></div>
+                        <span>audit-records.log</span>
+                    </div>
+                    <div class="log-box" id="log-body">Loading logs...</div>
+                </div>
+            </section>
+
+            <!-- Embedded Python -->
+            <section class="tab-content" id="python">
+                <div class="py-hero">
+                    <div class="py-hero-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2c-3 0-4 1-4 3v1h8V5c0-2-1-3-4-3z"/><path d="M8 6v3a2 2 0 0 0 2 2h4a2 2 0 0 1 2 2v3"/><path d="M12 22c3 0 4-1 4-3v-1H8v1c0 2 1 3 4 3z"/><circle cx="9" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg>
+                    </div>
+                    <div class="py-hero-text">
+                        <h2>Embedded Python Console</h2>
+                        <p>Live execution of Python code inside IRIS 2026.2 via the official Embedded Python engine</p>
+                    </div>
+                    <div class="py-hero-badge" id="py-status">detecting...</div>
+                </div>
+
+                <div class="py-grid">
+                    <div class="py-info-grid">
+                        <div class="info-card py-card">
+                            <h3>Runtime</h3>
+                            <div class="info-row"><span>Version</span><b id="py-version">--</b></div>
+                            <div class="info-row"><span>Implementation</span><b id="py-impl">--</b></div>
+                            <div class="info-row"><span>Platform</span><b id="py-platform">--</b></div>
+                            <div class="info-row"><span>Machine</span><b id="py-machine">--</b></div>
+                            <div class="info-row"><span>Executable</span><b id="py-exec" class="py-path">--</b></div>
+                        </div>
+                        <div class="info-card py-card">
+                            <h3>IRIS Integration</h3>
+                            <div class="info-row"><span>iris module</span><b id="py-iris">--</b></div>
+                            <div class="info-row"><span>IRIS version</span><b id="py-irisver">--</b></div>
+                            <div class="info-row"><span>Packages</span><b id="py-pkgs">--</b></div>
+                            <div class="py-pkg-list" id="py-pkglist"></div>
+                        </div>
+                    </div>
+
+                    <div class="py-console">
+                        <div class="console-topbar">
+                            <div class="console-dots"><span></span><span></span><span></span></div>
+                            <span class="console-title">embedded-python &mdash; main.py</span>
+                            <button class="py-run-btn" id="py-run-btn" onclick="runPython()">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                Run
+                            </button>
+                        </div>
+                        <textarea id="py-code" class="py-editor" spellcheck="false" placeholder="# Write Python code here. Use the 'iris' module to access IRIS globals.&#10;import iris&#10;print(iris.cls('%SYSTEM.Version').GetVersion())"></textarea>
+                        <div class="console-out">
+                            <div class="out-label">Output</div>
+                            <pre id="py-output" class="py-output">$ python main.py</pre>
+                        </div>
+                        <div class="py-snippets">
+                            <span class="snip-label">Snippets:</span>
+                            <button class="snip-btn" onclick="loadSnippet('sys')">System info</button>
+                            <button class="snip-btn" onclick="loadSnippet('iris')">IRIS globals</button>
+                            <button class="snip-btn" onclick="loadSnippet('math')">Math demo</button>
+                            <button class="snip-btn" onclick="loadSnippet('json')">JSON parse</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

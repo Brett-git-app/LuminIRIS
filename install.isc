@@ -11,7 +11,8 @@ set root = "C:/IRIS"
 write !, "=== Loading Luminiris.Installer ===", !
 set sc = $system.OBJ.Load(root _ "/src/install/Luminiris.Installer.cls", "ck")
 do $system.Status.DisplayError(sc)
-if ($$$ISERR(sc)) halt
+;; direct-mode script: $$$ macros are not available (not compiled)
+if $system.Status.IsError(sc) halt
 
 write !, "=== Installing LuminIRIS ===", !
 set sc = ##class(Luminiris.Installer).Install(root _ "/src/csp")

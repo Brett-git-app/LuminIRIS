@@ -39,12 +39,14 @@ set r("DispatchClass")="Luminiris.PythonApi"
 set r("AutheEnabled")=32
 set r("JWTAuthEnabled")=1
 set tmp=##class(Security.Applications).Get("/luminiris/api",.old)
-if $$$ISERR(tmp) {
-    set sc2=##class(Security.Applications).Create("/luminiris/api",.r)
-    write "[luminiris] REST app created: ",$system.Status.GetErrorText(sc2),!
-} else {
-    set sc2=##class(Security.Applications).Modify("/luminiris/api",.r)
-    write "[luminiris] REST app updated: ",$system.Status.GetErrorText(sc2),!
-}
+;; NOTE: a .script runs line-by-line in DIRECT MODE and is never compiled,
+;; so $$$ macros do not exist and { } blocks are not supported. Use
+;; $system.Status.IsError() (the runtime equivalent of $$$ISERR) plus
+;; post-conditional commands instead.
+set %if=$system.Status.IsError(tmp)
+set:%if sc2=##class(Security.Applications).Create("/luminiris/api",.r)
+write:%if "[luminiris] REST app created: ",$system.Status.GetErrorText(sc2),!
+set:'%if sc2=##class(Security.Applications).Modify("/luminiris/api",.r)
+write:'%if "[luminiris] REST app updated: ",$system.Status.GetErrorText(sc2),!
 
 halt

@@ -25,3 +25,9 @@ RUN iris start IRIS \
 # 52773: Web Gateway (Management Portal + /api/admin + LuminIRIS)
 # 1972 : SuperServer (default port inside the community container)
 EXPOSE 52773 1972
+
+# IRIS 2026.2+: skip the ISC Agent. On hosts where it cannot start, the
+# post-startup "iris-after-start" hook exits 256 and the container ends
+# with "[FATAL] Error executing post-startup command" (GitHub issue #2).
+# docker-compose passes the same flag via its command: override.
+CMD ["/iris-main", "--ISCAgent", "false"]
